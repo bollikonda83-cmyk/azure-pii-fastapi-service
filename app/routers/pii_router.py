@@ -1,0 +1,26 @@
+import logging
+from fastapi import APIRouter
+from app.models.pii_models import (
+    PIIRequest, PIIResponse,
+    KeyPhraseRequest, KeyPhraseResponse
+)
+from app.pii_client import detect_pii, extract_key_phrases
+
+logger = logging.getLogger("pii_router")
+
+router = APIRouter(prefix="/pii", tags=["PII Detection & Language"])
+
+@router.post("/", response_model=PIIResponse)
+def pii_detection(req: PIIRequest):
+    logger.info("PII detection endpoint called")
+    result = detect_pii(req.text)
+    logger.info("PII detection completed")
+    return PIIResponse(pii=result)
+
+
+@router.post("/keyphrases", response_model=KeyPhraseResponse)
+def key_phrase_extraction(req: KeyPhraseRequest):
+    logger.info("Key phrase extraction endpoint called")
+    result = extract_key_phrases(req.text)
+    logger.info("Key phrase extraction completed")
+    return KeyPhraseResponse(key_phrases=result)
