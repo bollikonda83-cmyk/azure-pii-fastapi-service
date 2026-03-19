@@ -31,3 +31,17 @@ class ClassificationResponse(BaseModel):
     neutral_score: float
     negative_score: float
 
+class LanguageDetectionRequest(BaseModel):
+    text: str
+
+class LanguageDetectionResponse(BaseModel):
+    language: str
+    confidence_score: float
+
+class TranslationRequest(BaseModel):
+    text: str
+    to_language: str
+
+class TranslationResponse(BaseModel):
+    translated_text: str
+

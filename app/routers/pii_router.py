@@ -21,6 +21,26 @@ from app.pii_client import (
     extract_key_phrases,
     classify_text,
 )
+from app.models.pii_models import (
+    PIIRequest, PIIResponse,
+    KeyPhraseRequest, KeyPhraseResponse,
+    TranslationRequest, TranslationResponse,
+    ClassificationRequest, ClassificationResponse,
+    LanguageDetectionRequest, LanguageDetectionResponse
+)
+
+from app.pii_client import (
+    detect_pii,
+    extract_key_phrases,
+    classify_text,
+    detect_language
+)
+
+from app.models.pii_models import (
+    TranslationRequest, TranslationResponse
+)
+from app.pii_client import translate_text
+
 
 @router.post("/", response_model=PIIResponse)
 def pii_detection(req: PIIRequest):
@@ -43,3 +63,17 @@ def classify(req: ClassificationRequest):
     result = classify_text(req.text)
     logger.info("Text classification completed")
     return ClassificationResponse(**result)
+
+@router.post("/language", response_model=LanguageDetectionResponse)
+def language_detection(req: LanguageDetectionRequest):
+    logger.info("Language detection endpoint called")
+    result = detect_language(req.text)
+    logger.info("Language detection completed")
+    return LanguageDetectionResponse(**result)
+
+@router.post("/translate", response_model=TranslationResponse)
+def translate(req: TranslationRequest):
+    logger.info("Translation endpoint called")
+    result = translate_text(req.text, req.to_language)
+    logger.info("Translation completed")
+    return TranslationResponse(translated_text=result)

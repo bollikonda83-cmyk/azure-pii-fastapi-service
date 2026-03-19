@@ -2,6 +2,9 @@ import logging
 from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from app.config import settings
+import requests
+import logging
+from app.config import settings
 
 logger = logging.getLogger("language_client")
 
@@ -59,6 +62,48 @@ def classify_text(text: str):
         "neutral_score": scores.neutral,
         "negative_score": scores.negative,
     }
+
+def detect_language(text: str):
+    logger.info("Calling Azure Language Detection")
+
+    response = client.detect_language([text])[0]
+
+    language = response.primary_language.name
+    score = response.primary_language.confidence_score
+
+    logger.info(f"Detected language: {language} (confidence={score})")
+
+    return {
+        "language": language,
+        "confidence_score": score
+    }
+logger = logging.getLogger("translation_client")
+
+def translate_text(text: str, to_language: str):
+    logger.info(f"Calling Azure Translator to translate text to '{to_language}'")
+
+    endpoint = "https://api.cognitive.microsofttranslator.com/"
+    key = "6FNOVBeC4JwokGP0719gQv9CMKYgXLv4vNyzMaxUknPcbSGHfQHgJQQJ99CCACBsN54XJ3w3AAAbACOG5QVt"
+    region = "canadacentral"
+
+    url = f"{endpoint}/translate?api-version=3.0&to={to_language}"
+
+    headers = {
+        "Ocp-Apim-Subscription-Key": key,
+        "Ocp-Apim-Subscription-Region": region,
+        "Content-Type": "application/json"
+    }
+
+    body = [{"text": text}]
+
+    response = requests.post(url, headers=headers, json=body)
+    response.raise_for_status()
+
+    translated_text = response.json()[0]["translations"][0]["text"]
+
+    logger.info("Translation completed successfully")
+
+    return translated_text
 
 
 
