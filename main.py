@@ -16,5 +16,5 @@ app.include_router(pii_router)
 
 @app.get("/")
 def root():
-    logger.info("Root endpoint called")
+    logger.info("Root endpoint called-first endpoint")
     return {"status": "running", "service": "Azure PII Detection"}

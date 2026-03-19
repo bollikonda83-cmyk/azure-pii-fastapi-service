@@ -37,3 +37,28 @@ def extract_key_phrases(text: str):
     logger.info(f"Azure returned {len(response.key_phrases)} key phrases")
 
     return response.key_phrases
+
+logger = logging.getLogger("translation_client")
+
+def classify_text(text: str):
+    logger.info("Calling Azure Sentiment Analysis for text classification")
+
+    response = client.analyze_sentiment([text])[0]
+
+    sentiment = response.sentiment  # "positive", "neutral", or "negative"
+    scores = response.confidence_scores
+
+    logger.info(
+        f"Classification result: {sentiment} "
+        f"(pos={scores.positive}, neu={scores.neutral}, neg={scores.negative})"
+    )
+
+    return {
+        "label": sentiment,
+        "positive_score": scores.positive,
+        "neutral_score": scores.neutral,
+        "negative_score": scores.negative,
+    }
+
+
+
