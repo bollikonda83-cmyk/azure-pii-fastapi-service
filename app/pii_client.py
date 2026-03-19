@@ -5,6 +5,7 @@ from app.config import settings
 import requests
 import logging
 from app.config import settings
+import os
 
 logger = logging.getLogger("language_client")
 
@@ -82,9 +83,9 @@ logger = logging.getLogger("translation_client")
 def translate_text(text: str, to_language: str):
     logger.info(f"Calling Azure Translator to translate text to '{to_language}'")
 
-    endpoint = "https://api.cognitive.microsofttranslator.com/"
-    key = "6FNOVBeC4JwokGP0719gQv9CMKYgXLv4vNyzMaxUknPcbSGHfQHgJQQJ99CCACBsN54XJ3w3AAAbACOG5QVt"
-    region = "canadacentral"
+    endpoint = os.getenv("AZURE_TRANSLATOR_ENDPOINT")
+    key = os.getenv("AZURE_TRANSLATOR_KEY")
+    region = os.getenv("AZURE_TRANSLATOR_REGION")
 
     url = f"{endpoint}/translate?api-version=3.0&to={to_language}"
 
