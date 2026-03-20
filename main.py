@@ -5,7 +5,7 @@ import logging
 from app.middleware import RequestLoggingMiddleware
 
 setup_logging()
-logger = logging.getLogger("main123")
+logger = logging.getLogger("main1234")
     
 app = FastAPI(title="Azure PII Detection Service")
 app.add_middleware(RequestLoggingMiddleware)
