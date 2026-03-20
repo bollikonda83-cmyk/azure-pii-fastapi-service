@@ -1,0 +1,49 @@
+name: Deploy FastAPI to Azure Container Apps
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Login to Azure
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      # Login to ACR
+      - name: Login to ACR
+        run: |
+          az acr login --name yellaiahacr2026
+
+      # Build Docker image
+      - name: Build Docker image
+        run: |
+          docker build -t fastapi-app:${{ github.sha }} .
+
+      # Tag image for ACR
+      - name: Tag image
+        run: |
+          docker tag fastapi-app:${{ github.sha }} yellaiahacr2026.azurecr.io/fastapi-app:${{ github.sha }}
+
+      # Push image to ACR
+      - name: Push image
+        run: |
+          docker push yellaiahacr2026.azurecr.io/fastapi-app:${{ github.sha }}
+
+      # Deploy to Azure Container Apps
+      - name: Deploy to Container App
+        run: |
+          az containerapp update \
+            --name pii-fastapi-app \
+            --resource-group rg-ai-learning \
+            --image yellaiahacr2026.azurecr.io/fastapi-app:${{ github.sha }}
