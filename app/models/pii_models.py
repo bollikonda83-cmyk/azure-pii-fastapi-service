@@ -45,3 +45,8 @@ class TranslationRequest(BaseModel):
 class TranslationResponse(BaseModel):
     translated_text: str
 
+class ExtractiveSummaryRequest(BaseModel):
+    text: str
+
+class ExtractiveSummaryResponse(BaseModel):
+    sentences: List[str]

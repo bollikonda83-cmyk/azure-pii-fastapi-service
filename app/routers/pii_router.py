@@ -1,8 +1,8 @@
 import logging
 from fastapi import APIRouter
 from app.models.pii_models import (
-    PIIRequest, PIIResponse,
-    KeyPhraseRequest, KeyPhraseResponse, TranslationResponse
+    ExtractiveSummaryResponse, PIIRequest, PIIResponse,
+    KeyPhraseRequest, KeyPhraseResponse, TranslationResponse, ExtractiveSummaryRequest
 )
 from app.pii_client import detect_pii, extract_key_phrases
 
@@ -77,3 +77,10 @@ def translate(req: TranslationRequest):
     result = translate_text(req.text, req.to_language)
     logger.info("Translation completed")
     return TranslationResponse(translated_text=result)
+
+@router.post("/summary", response_model=ExtractiveSummaryResponse)
+def extractive_summary(req: ExtractiveSummaryRequest):
+    logger.info("Extractive summary endpoint called")
+    result = extractive_summary(req.text)
+    logger.info("Extractive summary completed")
+    return ExtractiveSummaryResponse(sentences=result)
