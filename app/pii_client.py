@@ -1,11 +1,12 @@
 import logging
-from azure.ai.textanalytics import TextAnalyticsClient, ExtractSummaryAction
+from azure.ai.textanalytics import TextAnalyticsClient
 from azure.core.credentials import AzureKeyCredential
 from app.config import settings
 import requests
 import logging
 from app.config import settings
 import os
+from openai import AzureOpenAI
 
 logger = logging.getLogger("language_client")
 
@@ -105,13 +106,4 @@ def translate_text(text: str, to_language: str):
     logger.info("Translation completed successfully")
 
     return translated_text
-
-def extractive_summary(text):
-    poller = client.begin_analyze_actions(
-        [text],
-        actions=[ExtractSummaryAction(max_sentence_count=3)]
-    )
-    result = list(poller.result())[0][0].extract_summary_result
-    return [sentence.text for sentence in result.sentences]
-
 
